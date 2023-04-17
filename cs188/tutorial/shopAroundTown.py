@@ -4,14 +4,12 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
 """
 Here's the intended output of this script, once you fill it in:
 
@@ -100,13 +98,14 @@ if __name__ == '__main__':
     shop2 = shop.FruitShop('shop2', dir2)
     shop3 = shop.FruitShop('shop3', dir3)
     shops = [shop1, shop2, shop3]
-    distances = {('home', 'shop1'): 2,
-                 ('home', 'shop2'): 1,
-                 ('home', 'shop3'): 1,
-                 ('shop1', 'shop2'): 2.5,
-                 ('shop1', 'shop3'): 2.5,
-                 ('shop2', 'shop3'): 1
-                 }
+    distances = {
+        ('home', 'shop1'): 2,
+        ('home', 'shop2'): 1,
+        ('home', 'shop3'): 1,
+        ('shop1', 'shop2'): 2.5,
+        ('shop1', 'shop3'): 2.5,
+        ('shop2', 'shop3'): 1
+    }
     fruitTown = town.Town(shops, distances)
     print("Orders:", orders)
     for price in (1, 3, 5, -1):
