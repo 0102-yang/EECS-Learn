@@ -4,20 +4,19 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
-
 """
 In search.py, you will implement generic search algorithms which are called by
 Pacman agents (in searchAgents.py).
 """
 
 import util
+
 
 class SearchProblem:
     """
@@ -70,7 +69,8 @@ def tinyMazeSearch(problem):
     from game import Directions
     s = Directions.SOUTH
     w = Directions.WEST
-    return  [s, s, w, s, w, w, s, w]
+    return [s, s, w, s, w, w, s, w]
+
 
 def depthFirstSearch(problem: SearchProblem):
     """
@@ -86,18 +86,67 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+
+    def depth_first_search(state, actions: util.Stack, visited: set) -> bool:
+        """ 
+        Execute depth-first search algorithm. 
+        """
+        if state in visited:
+            return False
+        visited.add(state)
+
+        if problem.isGoalState(state):
+            return True
+
+        for next_state, action, _ in problem.getSuccessors(state):
+            actions.push(action)
+            if depth_first_search(next_state, actions, visited) is True:
+                return True
+            actions.pop()
+
+        return False
+
+    actions = util.Stack()
+    visited = set()
+    return actions.list if depth_first_search(problem.getStartState(), actions,
+                                              visited) else []
+
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Execute breadth first search algorithm.
+    paths = {}
+    search_queue = util.Queue()
+    visited = set()
+
+    start_state = problem.getStartState()
+    search_queue.push(start_state)
+    visited.add(start_state)
+    paths[start_state] = []
+
+    while not search_queue.isEmpty():
+        state = search_queue.pop()
+
+        if problem.isGoalState(state):
+            return paths[state]
+
+        for next_state, action, _ in problem.getSuccessors(state):
+            if next_state not in visited:
+                search_queue.push(next_state)
+                visited.add(next_state)
+
+                action_list = paths[state].copy()
+                action_list.append(action)
+                paths[next_state] = action_list
+
+    return []
+
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
+
 
 def nullHeuristic(state, problem=None):
     """
@@ -105,6 +154,7 @@ def nullHeuristic(state, problem=None):
     goal in the provided SearchProblem.  This heuristic is trivial.
     """
     return 0
+
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
