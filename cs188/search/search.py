@@ -170,8 +170,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
 
         for next_state, action, _ in problem.getSuccessors(state):
             if next_state not in visited:
-                next_state_action_list = paths[state].copy()
-                next_state_action_list.append(action)
+                next_state_action_list = paths[state].copy() + [action]
                 paths[next_state] = next_state_action_list
 
                 search_priority_queue.push(
