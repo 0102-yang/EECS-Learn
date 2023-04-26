@@ -144,6 +144,19 @@ def breadthFirstSearch(problem: SearchProblem):
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
+    return aStarSearch(problem)
+
+
+def nullHeuristic(state, problem=None):
+    """
+    A heuristic function estimates the cost from the current state to the nearest
+    goal in the provided SearchProblem.  This heuristic is trivial.
+    """
+    return 0
+
+
+def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
+    """Search the node that has the lowest combined cost and heuristic first."""
     paths = {}
     search_priority_queue = util.PriorityQueue()
     visited = set()
@@ -153,7 +166,9 @@ def uniformCostSearch(problem: SearchProblem):
     visited.add(start_state)
     paths[start_state] = start_state_action_list
     search_priority_queue.push(
-        start_state, problem.getCostOfActions(start_state_action_list))
+        start_state,
+        problem.getCostOfActions(start_state_action_list) +
+        heuristic(start_state, problem))
 
     while not search_priority_queue.isEmpty():
         state = search_priority_queue.pop()
@@ -169,25 +184,12 @@ def uniformCostSearch(problem: SearchProblem):
 
                 search_priority_queue.push(
                     next_state,
-                    problem.getCostOfActions(next_state_action_list))
+                    problem.getCostOfActions(next_state_action_list) +
+                    heuristic(next_state, problem))
                 if not problem.isGoalState(next_state):
                     visited.add(next_state)
 
     return []
-
-
-def nullHeuristic(state, problem=None):
-    """
-    A heuristic function estimates the cost from the current state to the nearest
-    goal in the provided SearchProblem.  This heuristic is trivial.
-    """
-    return 0
-
-
-def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
-    """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
 
 
 # Abbreviations
