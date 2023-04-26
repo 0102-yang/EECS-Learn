@@ -86,8 +86,10 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
+    actions = util.Stack()
+    visited = set()
 
-    def depth_first_search(state, actions: util.Stack, visited: set) -> bool:
+    def depth_first_search(state) -> bool:
         """ 
         Execute depth-first search algorithm. 
         """
@@ -100,29 +102,23 @@ def depthFirstSearch(problem: SearchProblem):
 
         for next_state, action, _ in problem.getSuccessors(state):
             actions.push(action)
-            if depth_first_search(next_state, actions, visited) is True:
+            if depth_first_search(next_state):
                 return True
             actions.pop()
 
         return False
 
-    actions = util.Stack()
-    visited = set()
-    return actions.list if depth_first_search(problem.getStartState(), actions,
-                                              visited) else []
+    depth_first_search(problem.getStartState())
+    return actions.list
 
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     # Execute breadth first search algorithm.
-    paths = {}
-    search_queue = util.Queue()
-    visited = set()
-
     start_state = problem.getStartState()
+    paths = {start_state: []}
+    search_queue = util.Queue()
     search_queue.push(start_state)
-    visited.add(start_state)
-    paths[start_state] = []
 
     while not search_queue.isEmpty():
         state = search_queue.pop()
@@ -131,13 +127,9 @@ def breadthFirstSearch(problem: SearchProblem):
             return paths[state]
 
         for next_state, action, _ in problem.getSuccessors(state):
-            if next_state not in visited:
+            if next_state not in paths:
                 search_queue.push(next_state)
-                visited.add(next_state)
-
-                next_state_action_list = paths[state].copy()
-                next_state_action_list.append(action)
-                paths[next_state] = next_state_action_list
+                paths[next_state] = paths[state].copy() + [action]
 
     return []
 
