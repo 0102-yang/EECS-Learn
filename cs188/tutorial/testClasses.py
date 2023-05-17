@@ -4,13 +4,12 @@
 # educational purposes provided that (1) you do not distribute or publish
 # solutions, (2) you retain this notice, and (3) you provide clear
 # attribution to UC Berkeley, including a link to http://ai.berkeley.edu.
-# 
+#
 # Attribution Information: The Pacman AI projects were developed at UC Berkeley.
 # The core projects and autograders were primarily created by John DeNero
 # (denero@cs.berkeley.edu) and Dan Klein (klein@cs.berkeley.edu).
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
-
 
 # import modules from python standard library
 from __future__ import print_function
@@ -65,6 +64,7 @@ class PassAllTestsQuestion(Question):
 
 
 class ExtraCreditPassAllTestsQuestion(Question):
+
     def __init__(self, questionDict, display):
         Question.__init__(self, questionDict, display)
         self.extraPoints = int(questionDict['extra_points'])
@@ -175,15 +175,15 @@ class TestCase(object):
     # to get a nice hierarchical project - question - test structure,
     # then these should be moved into Question proper.
     def testPass(self, grades):
-        grades.addMessage('PASS: %s' % (self.path,))
+        grades.addMessage('PASS: %s' % (self.path, ))
         for line in self.messages:
-            grades.addMessage('    %s' % (line,))
+            grades.addMessage('    %s' % (line, ))
         return True
 
     def testFail(self, grades):
-        grades.addMessage('FAIL: %s' % (self.path,))
+        grades.addMessage('FAIL: %s' % (self.path, ))
         for line in self.messages:
-            grades.addMessage('    %s' % (line,))
+            grades.addMessage('    %s' % (line, ))
         return False
 
     # This should really be question level?
@@ -193,13 +193,14 @@ class TestCase(object):
         extraCredit = max(0, points - maxPoints)
         regularCredit = points - extraCredit
 
-        grades.addMessage('%s: %s (%s of %s points)' % (
-            "PASS" if points >= maxPoints else "FAIL", self.path, regularCredit, maxPoints))
+        grades.addMessage('%s: %s (%s of %s points)' %
+                          ("PASS" if points >= maxPoints else "FAIL",
+                           self.path, regularCredit, maxPoints))
         if extraCredit > 0:
-            grades.addMessage('EXTRA CREDIT: %s points' % (extraCredit,))
+            grades.addMessage('EXTRA CREDIT: %s points' % (extraCredit, ))
 
         for line in self.messages:
-            grades.addMessage('    %s' % (line,))
+            grades.addMessage('    %s' % (line, ))
 
         return True
 
