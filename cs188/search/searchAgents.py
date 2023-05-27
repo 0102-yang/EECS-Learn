@@ -569,25 +569,39 @@ class ClosestDotSearchAgent(SearchAgent):
         food = gameState.getFood().asList()
         problem = AnyFoodSearchProblem(gameState)
 
+        # Find closet food
+        closest_food = None
+        search_queue = util.Queue()
+        search_queue.push(start_position)
+        visited = set(start_position)
+
+        while not search_queue.isEmpty():
+            state = search_queue.pop()
+
+            if state in food:
+                closest_food = state
+                break
+
+            for next_state, action, _ in problem.getSuccessors(state):
+                if next_state not in visited:
+                    search_queue.push(next_state)
+                    visited.add(next_state)
+
+        def greedy_heuristic(state: Tuple[int, int]):
+            '''
+            Greedy heuristic function.
+            '''
+            return mazeDistance(state, closest_food, gameState)
+
         paths = {}
         search_priority_queue = util.PriorityQueue()
         visited = set()
 
-        def h(state: Tuple[int, int]):
-            import sys
-            min_distance = sys.maxsize
-            for f in food:
-                distance = mazeDistance(state, f, gameState)
-                if distance == 1:
-                    return 1
-                min_distance = min(distance, min_distance)
-
-            return min_distance
-
         start_state_action_list = []
         visited.add(start_position)
         paths[start_position] = start_state_action_list
-        search_priority_queue.push(start_position, h(start_position))
+        search_priority_queue.push(start_position,
+                                   greedy_heuristic(start_position))
 
         while not search_priority_queue.isEmpty():
             state = search_priority_queue.pop()
@@ -600,9 +614,12 @@ class ClosestDotSearchAgent(SearchAgent):
                     next_state_action_list = paths[state].copy() + [action]
                     paths[next_state] = next_state_action_list
 
-                    search_priority_queue.push(next_state, h(next_state))
+                    search_priority_queue.push(next_state,
+                                               greedy_heuristic(next_state))
                     if not problem.isGoalState(next_state):
                         visited.add(next_state)
+
+        return []
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
