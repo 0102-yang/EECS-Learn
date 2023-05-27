@@ -565,12 +565,44 @@ class ClosestDotSearchAgent(SearchAgent):
         gameState.
         """
         # Here are some useful elements of the startState
-        startPosition = gameState.getPacmanPosition()
-        food = gameState.getFood()
-        walls = gameState.getWalls()
+        start_position = gameState.getPacmanPosition()
+        food = gameState.getFood().asList()
         problem = AnyFoodSearchProblem(gameState)
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        paths = {}
+        search_priority_queue = util.PriorityQueue()
+        visited = set()
+
+        def h(state: Tuple[int, int]):
+            import sys
+            min_distance = sys.maxsize
+            for f in food:
+                distance = mazeDistance(state, f, gameState)
+                if distance == 1:
+                    return 1
+                min_distance = min(distance, min_distance)
+
+            return min_distance
+
+        start_state_action_list = []
+        visited.add(start_position)
+        paths[start_position] = start_state_action_list
+        search_priority_queue.push(start_position, h(start_position))
+
+        while not search_priority_queue.isEmpty():
+            state = search_priority_queue.pop()
+
+            if problem.isGoalState(state):
+                return paths[state]
+
+            for next_state, action, _ in problem.getSuccessors(state):
+                if next_state not in visited:
+                    next_state_action_list = paths[state].copy() + [action]
+                    paths[next_state] = next_state_action_list
+
+                    search_priority_queue.push(next_state, h(next_state))
+                    if not problem.isGoalState(next_state):
+                        visited.add(next_state)
 
 
 class AnyFoodSearchProblem(PositionSearchProblem):
@@ -591,7 +623,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
     def __init__(self, gameState):
         "Stores information from the gameState.  You don't need to change this."
         # Store the food for later reference
-        self.food = gameState.getFood()
+        self.food = gameState.getFood().asList()
 
         # Store info for the PositionSearchProblem (no need to change this)
         self.walls = gameState.getWalls()
@@ -604,9 +636,7 @@ class AnyFoodSearchProblem(PositionSearchProblem):
         The state is Pacman's position. Fill this in with a goal test that will
         complete the problem definition.
         """
-        x, y = state
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return state in self.food
 
 
 def mazeDistance(point1: Tuple[int, int], point2: Tuple[int, int],
