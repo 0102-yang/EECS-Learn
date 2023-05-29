@@ -63,23 +63,53 @@ class ReflexAgent(Agent):
         GameStates (pacman.py) and returns a number, where higher numbers are better.
 
         The code below extracts some useful information from the state, like the
-        remaining food (newFood) and Pacman position after moving (newPos).
-        newScaredTimes holds the number of moves that each ghost will remain
+        remaining food (new_food) and Pacman position after moving (new_pos).
+        new_scared_times holds the number of moves that each ghost will remain
         scared because of Pacman having eaten a power pellet.
 
         Print out these variables to see what you're getting, then combine them
         to create a masterful evaluation function.
         """
         # Useful information you can extract from a GameState (pacman.py)
-        successorGameState = currentGameState.generatePacmanSuccessor(action)
-        newPos = successorGameState.getPacmanPosition()
-        newFood = successorGameState.getFood()
-        newGhostStates = successorGameState.getGhostStates()
-        newScaredTimes = [
-            ghostState.scaredTimer for ghostState in newGhostStates
+        food_list = currentGameState.getFood().asList()
+
+        successor_game_state = currentGameState.generatePacmanSuccessor(action)
+        new_pacman_position = successor_game_state.getPacmanPosition()
+
+        new_ghost_states = [
+            (ghost_state.getPosition(), ghost_state.scaredTimer)
+            for ghost_state in successor_game_state.getGhostStates()
         ]
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
+
+        if not food_list:
+            return 999999
+
+        # Evaluate ghost position
+        ghost_penalty = 0
+        closest_ghost_state = min(
+            new_ghost_states,
+            key=lambda g: manhattanDistance(new_pacman_position, g[0]))
+        closest_ghost_distance = manhattanDistance(closest_ghost_state[0],
+                                                   new_pacman_position)
+        if closest_ghost_distance <= 1 and closest_ghost_state[1] == 0:
+            ghost_penalty = 3
+
+        # Evaluate eating food
+        food_reward = 0
+        if new_pacman_position in food_list:
+            food_reward = 2
+
+        # Evaluate food distance
+        closest_food_position = min(
+            food_list, key=lambda f: manhattanDistance(new_pacman_position, f))
+        closest_food_distance = manhattanDistance(new_pacman_position,
+                                                  closest_food_position)
+        food_distance_reward = 1 / (closest_food_distance + 1)
+
+        # Stop action penalty
+        stop_penalty = 0.5 if action == Directions.STOP else 0
+
+        return food_reward + food_distance_reward - ghost_penalty - stop_penalty
 
 
 def scoreEvaluationFunction(currentGameState: GameState):
