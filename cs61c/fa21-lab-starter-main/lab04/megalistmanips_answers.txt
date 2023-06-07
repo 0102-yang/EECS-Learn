@@ -1,0 +1,10 @@
+1. A: change la a0, 8(s0) instruction to lw a0, 8(s0)
+   Because 'la' is not correct here.
+2. A: change 'lw a1, 0(s1)' instruction to 'add a1, s1, x0'
+   Because value stored in s1 is already the address of the function f.
+3. A: change all the $t1 in function mystery into $t5
+   Because value stored in $t1 is modified in mystery function call.
+4. A: change the way of computing address offset of array and save word, load word.
+   Because int* arr in node is also another address.
+5. Add 'jr ra' in label "done" in "map" function.
+6. Save stunk before excute 'jal' function.
