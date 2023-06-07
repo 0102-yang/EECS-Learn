@@ -1,0 +1,10 @@
+**/__pycache__
+*/tests
+*/.ok_history
+*/.ok_storage
+*/ok
+*/*.ok
+*/construct_check.py
+.idea
+test.py
+.vscode/
