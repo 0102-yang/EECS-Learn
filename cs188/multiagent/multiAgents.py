@@ -51,7 +51,6 @@ class ReflexAgent(Agent):
         ]
         chosenIndex = random.choice(
             bestIndices)  # Pick randomly among the best
-        "Add more of your code here if you want to"
 
         return legalMoves[chosenIndex]
 
@@ -172,8 +171,36 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        def minimax(state: GameState, depth, agent_index):
+            '''
+            Minimax algorithm implementation. 
+            '''
+            if depth == 0 or state.isWin() or state.isLose():
+                return (None, self.evaluationFunction(state))
+
+            if agent_index == 0:
+                best_action, max_score = max(
+                    ((action,
+                      minimax(state.generateSuccessor(agent_index, action),
+                              depth, agent_index + 1)[1])
+                     for action in state.getLegalActions(agent_index)),
+                    key=lambda x: x[1])
+                return (best_action, max_score)
+            else:
+                agent_num = gameState.getNumAgents()
+                best_action, min_score = min(
+                    ((action,
+                      minimax(
+                          state.generateSuccessor(agent_index, action),
+                          depth if agent_index + 1 != agent_num else depth - 1,
+                          (agent_index + 1) % agent_num)[1])
+                     for action in state.getLegalActions(agent_index)),
+                    key=lambda x: x[1])
+                return (best_action, min_score)
+
+        action, _ = minimax(gameState, depth=self.depth, agent_index=0)
+        return action
 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
