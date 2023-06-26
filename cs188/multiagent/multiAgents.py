@@ -177,7 +177,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
             Minimax algorithm implementation. 
             '''
             if depth == 0 or state.isWin() or state.isLose():
-                return (None, self.evaluationFunction(state))
+                return None, self.evaluationFunction(state)
 
             if agent_index == 0:
                 best_action, max_score = max(
@@ -186,7 +186,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                               depth, agent_index + 1)[1])
                      for action in state.getLegalActions(agent_index)),
                     key=lambda x: x[1])
-                return (best_action, max_score)
+                return best_action, max_score
             else:
                 agent_num = gameState.getNumAgents()
                 best_action, min_score = min(
@@ -197,9 +197,9 @@ class MinimaxAgent(MultiAgentSearchAgent):
                           (agent_index + 1) % agent_num)[1])
                      for action in state.getLegalActions(agent_index)),
                     key=lambda x: x[1])
-                return (best_action, min_score)
+                return best_action, min_score
 
-        action, _ = minimax(gameState, depth=self.depth, agent_index=0)
+        action, _ = minimax(gameState, self.depth, agent_index=0)
         return action
 
 
