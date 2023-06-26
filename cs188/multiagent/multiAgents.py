@@ -212,8 +212,60 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+
+        def alpha_beta_minimax(state: GameState, depth, agent_index, alpha,
+                               beta):
+            '''
+            Alpha-beta minimax algorithm implementation.
+            '''
+            if depth == 0 or state.isWin() or state.isLose():
+                return None, self.evaluationFunction(state)
+
+            if agent_index == 0:
+                max_score = float('-inf')
+                best_action = None
+                for action in state.getLegalActions(agent_index):
+                    _, score = alpha_beta_minimax(
+                        state.generateSuccessor(agent_index, action), depth,
+                        agent_index + 1, alpha, beta)
+
+                    if score > max_score:
+                        max_score = score
+                        best_action = action
+                    if max_score > beta:
+                        return None, max_score
+
+                    alpha = max(alpha, max_score)
+
+                return best_action, max_score
+            else:
+                agent_num = state.getNumAgents()
+                next_depth = depth if agent_index + 1 != agent_num else depth - 1
+                next_agent_index = (agent_index + 1) % agent_num
+
+                min_score = float('inf')
+                best_action = None
+                for action in state.getLegalActions(agent_index):
+                    _, score = alpha_beta_minimax(
+                        state.generateSuccessor(agent_index, action),
+                        next_depth, next_agent_index, alpha, beta)
+
+                    if score < min_score:
+                        min_score = score
+                        best_action = action
+                    if min_score < alpha:
+                        return None, min_score
+
+                    beta = min(beta, min_score)
+
+                return best_action, min_score
+
+        best_action, _ = alpha_beta_minimax(gameState,
+                                            self.depth,
+                                            agent_index=0,
+                                            alpha=float('-inf'),
+                                            beta=float('inf'))
+        return best_action
 
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
