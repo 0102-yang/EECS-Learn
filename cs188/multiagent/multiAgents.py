@@ -180,6 +180,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                 return None, self.evaluationFunction(state)
 
             if agent_index == 0:
+                # Pacman
                 best_action, max_score = max(
                     ((action,
                       minimax(state.generateSuccessor(agent_index, action),
@@ -188,6 +189,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
                     key=lambda x: x[1])
                 return best_action, max_score
             else:
+                # Ghosts
                 agent_num = gameState.getNumAgents()
                 best_action, min_score = min(
                     ((action,
@@ -222,6 +224,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
                 return None, self.evaluationFunction(state)
 
             if agent_index == 0:
+                # Pacman
                 max_score = float('-inf')
                 best_action = None
                 for action in state.getLegalActions(agent_index):
@@ -239,6 +242,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
 
                 return best_action, max_score
             else:
+                # Ghosts
                 agent_num = state.getNumAgents()
                 next_depth = depth if agent_index + 1 != agent_num else depth - 1
                 next_agent_index = (agent_index + 1) % agent_num
@@ -318,15 +322,41 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         return action
 
 
-def betterEvaluationFunction(currentGameState: GameState):
+def betterEvaluationFunction(current_game_state: GameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
     evaluation function (question 5).
 
-    DESCRIPTION: <write something here so we know what you did>
+    DESCRIPTION:
+    By change evaluation function, we can change the behavior of the pacman.
+    1. It will get more penalty score when pacman is too close to the ghost. This will allow pacman to avoid being catched by the ghost.
+    2. Evaluate ghost scared time. This will allow pacman to chase weak ghost.
+    3. Evalueate distance between closest food and pacman. This will allow pacman to get food.
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    food_list = current_game_state.getFood().asList()
+    evaluation_score = current_game_state.getScore()
+    pacman = current_game_state.getPacmanPosition()
+    ghost = [(ghost_state.getPosition(), ghost_state.scaredTimer)
+             for ghost_state in current_game_state.getGhostStates()]
+
+    # Evaluate closest ghost
+    closest_ghost = min(ghost, key=lambda g: manhattanDistance(pacman, g[0]))
+    closest_ghost_distance = manhattanDistance(closest_ghost[0], pacman)
+    ghost_factor = -15.0
+    evaluation_score += ghost_factor / (1 + closest_ghost_distance)
+
+    # Evalueate ghost scared time
+    evaluation_score += sum(g[1] for g in ghost)
+
+    # Evaluate closet food
+    if food_list:
+        closest_food = min(food_list,
+                           key=lambda f: manhattanDistance(pacman, f))
+        closest_food_distance = manhattanDistance(closest_food, pacman)
+        food_factor = 10.0
+        evaluation_score += food_factor / (1 + closest_food_distance)
+
+    return evaluation_score
 
 
 # Abbreviation
