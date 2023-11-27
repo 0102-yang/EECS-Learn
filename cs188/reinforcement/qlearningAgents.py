@@ -11,6 +11,10 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
+from email import utils
+from msilib import Feature
+from pyexpat import features
+import re
 from game import *
 from learningAgents import ReinforcementAgent
 from featureExtractors import *
@@ -74,8 +78,8 @@ class QLearningAgent(ReinforcementAgent):
         """
         legal_actions = self.getLegalActions(state)
         return max(legal_actions,
-                   key=lambda action: self.getQValue(state, action)
-                   ) if len(legal_actions) > 0 else None
+                   key=lambda action: self.getQValue(state, action)) if len(
+                       legal_actions) > 0 else None
 
     def getAction(self, state):
         """
@@ -176,15 +180,18 @@ class ApproximateQAgent(PacmanQAgent):
           Should return Q(state,action) = w * featureVector
           where * is the dotProduct operator
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        features = self.featExtractor.getFeatures(state, action)
+        return sum(self.weights[k] * v for k,v in features.items())
 
     def update(self, state, action, nextState, reward: float):
         """
            Should update your weights based on transition
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        features = self.featExtractor.getFeatures(state, action)
+        difference = (reward + self.discount * self.getValue(nextState)
+                      ) - self.getQValue(state, action)
+        for k, v in features.items():
+            self.weights[k] += self.alpha * difference * v
 
     def final(self, state):
         """Called at the end of each game."""
@@ -194,5 +201,11 @@ class ApproximateQAgent(PacmanQAgent):
         # did we finish training?
         if self.episodesSoFar == self.numTraining:
             # you might want to print your weights here for debugging
-            "*** YOUR CODE HERE ***"
-            pass
+            print("== Parameters ==")
+            print("Alpha: {0}".format(self.alpha))
+            print("Epsilon: {0}".format(self.epsilon))
+            print("Gamma: {0}".format(self.discount))
+            print("== Features ==")
+            for i in features:
+                print("{0} : {1}".format(i, self.weights[i]))
+            print("==============")
