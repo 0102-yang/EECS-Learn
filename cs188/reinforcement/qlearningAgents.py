@@ -47,7 +47,6 @@ class QLearningAgent(ReinforcementAgent):
         "You can initialize Q-values here..."
         ReinforcementAgent.__init__(self, **args)
         self.q_values = {}
-        self.q_values = {}
 
     def getQValue(self, state, action):
         """
@@ -55,9 +54,6 @@ class QLearningAgent(ReinforcementAgent):
           Should return 0.0 if we have never seen a state
           or the Q node value otherwise
         """
-        return self.q_values[state][
-            action] if state in self.q_values and action in self.q_values[
-                state] else 0.0
         return self.q_values[state][
             action] if state in self.q_values and action in self.q_values[
                 state] else 0.0
@@ -69,10 +65,6 @@ class QLearningAgent(ReinforcementAgent):
           there are no legal actions, which is the case at the
           terminal state, you should return a value of 0.0.
         """
-        legal_actions = self.getLegalActions(state)
-        return max(
-            self.getQValue(state, action) for action in self.getLegalActions(
-                state)) if len(legal_actions) > 0 else 0.0
         legal_actions = self.getLegalActions(state)
         return max(
             self.getQValue(state, action) for action in self.getLegalActions(
@@ -103,12 +95,7 @@ class QLearningAgent(ReinforcementAgent):
         legal_actions = self.getLegalActions(state)
         if len(legal_actions) == 0:
             return None
-        legal_actions = self.getLegalActions(state)
-        if len(legal_actions) == 0:
-            return None
 
-        return random.choice(legal_actions) if util.flipCoin(
-            self.epsilon) else self.computeActionFromQValues(state)
         return random.choice(legal_actions) if util.flipCoin(
             self.epsilon) else self.computeActionFromQValues(state)
 
@@ -120,14 +107,6 @@ class QLearningAgent(ReinforcementAgent):
           NOTE: You should never call this function,
           it will be called on your behalf
         """
-        old_value = self.getQValue(state, action)
-        sample_value = reward + self.discount * self.computeValueFromQValues(
-            nextState)
-
-        if state not in self.q_values:
-            self.q_values[state] = {}
-        self.q_values[state][action] = (
-            1 - self.alpha) * old_value + self.alpha * sample_value
         old_value = self.getQValue(state, action)
         sample_value = reward + self.discount * self.computeValueFromQValues(
             nextState)
@@ -202,7 +181,7 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         features = self.featExtractor.getFeatures(state, action)
-        return sum(self.weights[k] * v for k,v in features.items())
+        return sum(self.weights[k] * v for k, v in features.items())
 
     def update(self, state, action, nextState, reward: float):
         """
